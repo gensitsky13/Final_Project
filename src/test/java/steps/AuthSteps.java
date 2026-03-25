@@ -25,12 +25,29 @@ private final UserApi userApi = new UserApi(apiClient);
 private final MainPage mainPage = new MainPage();
 
 
-@Когда("существующий пользователь зарегистрирован через API")
+/*@Когда("существующий пользователь зарегистрирован через API")
 public void existingUserRegisteredViaApi() {
     User user = TestData.validUser();
     TestContext.setUser(user);
 
     Response response = userApi.register(user);
+    assertTrue(response.statusCode() == 201 || response.statusCode() == 200);
+}
+
+ */
+@Когда("существующий пользователь зарегистрирован через API")
+public void existingUserRegisteredViaApi() {
+    User user = new User(
+            "test" + System.currentTimeMillis() + "@yandex.ru",
+            "123456"
+    );
+
+    TestContext.setUser(user);
+
+    Response response = userApi.register(user);
+    System.out.println("STATUS: " + response.statusCode());
+    System.out.println("BODY: " + response.getBody().asString());
+
     assertTrue(response.statusCode() == 201 || response.statusCode() == 200);
 }
     @Когда("пользователь авторизуется")
