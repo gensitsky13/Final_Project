@@ -1,32 +1,58 @@
+
 package pages;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import models.Ad;
 
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
-public class AdsPage extends BasePage {
-    private final SelenideElement createBtn = $("#createAd");  // TODO
-    private final SelenideElement title = $("#title");         // TODO
-    private final SelenideElement description = $("#desc");    // TODO
-    private final SelenideElement category = $("#category");   // TODO (select)
-    private final SelenideElement saveBtn = $("#save");        // TODO
+import static com.codeborne.selenide.WebDriverConditions.urlContaining;
 
-    public void openCreateForm() { createBtn.click(); }
+public class AdsPage {
 
-    public void createAd(Ad ad) {
-        title.setValue(ad.getTitle());
-        description.setValue(ad.getDescription());
-        // category.selectOption(ad.getCategory()); // если select
-        saveBtn.click();
+    private final SelenideElement adsPageContainer =
+            $(".ads-page, .ads-list");
+
+
+    private final SelenideElement placeAdButton =
+            $x("//button[contains(.,'Разместить объявление')]");
+
+    public AdsPage shoulBeOpened() {
+        webdriver().shouldHave(urlContaining("/ads"));
+        placeAdButton.shouldBe(visible);
+        return this;
     }
 
-    public SelenideElement adCardByTitle(String titleText) {
-        // TODO: под твой UI
-        return $$("[data-test='ad-card']").findBy(com.codeborne.selenide.Condition.text(titleText));
+    public AdsPage clickPlaceAd() {
+        System.out.println("DEBUG: clickPlaceAd called");
+        System.out.println("DEBUG: placeAdButton text = " + placeAdButton.getText());
+
+        placeAdButton.shouldBe(visible, enabled).scrollIntoView(true);
+
+        try {
+            placeAdButton.click();
+            System.out.println("DEBUG: regular click done");
+        } catch (Exception e) {
+            System.out.println("DEBUG: regular click failed, fallback to JS click");
+            executeJavaScript("arguments[0].click();", placeAdButton);
+        }
+
+        return this;
     }
 
-    public void openAdByTitle(String titleText) {
-        adCardByTitle(titleText).click();
+    public SelenideElement adCardByTitle(String title) {
+
+        return $(byText(title));
+    }
+
+   // public void shouldBeOpened() {
+      //  webdriver().shouldHave(urlContaining("/ads"));
+   //}
+
+
+    public void open() {
+        Selenide.open("https://qa-desk.stand.praktikum-services.ru/ads");
     }
 }

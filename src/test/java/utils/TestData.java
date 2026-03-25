@@ -12,12 +12,14 @@ public class TestData {
     }
 
     public static Ad newAdAnyCategory() {
-        // ВАЖНО: подстрой под твой конструктор Ad
-        // Я даю безопасный шаблон: если у Ad другой конструктор — скажи, я подгоню 1-в-1.
+
         String title = "Ad_" + System.currentTimeMillis();
+        String category = "Авто";
+        String condition = "Новый";
+        String city = "Москва";
         String description = "Test description";
         String price = "100";
 
-        return new Ad(title, description, price);
+        return new Ad(title, category, condition, city, description, price);
     }
 }

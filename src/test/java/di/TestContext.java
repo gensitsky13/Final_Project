@@ -4,25 +4,33 @@ import models.Ad;
 import models.User;
 
 public class TestContext {
+    private static TestContext ctx;
 
     private User user;
     private Ad ad;
 
-    // --- User context ---
-    public User getUser() {
-        return user;
+    static TestContext getInstance() {
+        if (ctx == null) {
+            ctx = new TestContext();
+        }
+        return ctx;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+
+    public static User getUser() {
+        return getInstance().user;
     }
 
-    // --- Ad context ---
-    public Ad getAd() {
-        return ad;
+    public static void setUser(User user) {
+        getInstance().user = user;
     }
 
-    public void setAd(Ad ad) {
-        this.ad = ad;
+
+    public static Ad getAd() {
+        return getInstance().ad;
+    }
+
+    public static void setAd(Ad ad) {
+        getInstance().ad = ad;
     }
 }

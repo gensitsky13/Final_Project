@@ -118,8 +118,9 @@
             <artifactId>webdrivermanager</artifactId>
             <version>${webdrivermanager.version}</version>
             <scope>test</scope>
-        </dependency>
 
+
+        </dependency>
     </dependencies>
 
     <build>

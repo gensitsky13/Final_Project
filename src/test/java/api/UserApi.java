@@ -1,11 +1,13 @@
 package api;
 
+import api.dto.RegisterRequest;
 import io.restassured.response.Response;
 import models.User;
 
 import static io.restassured.RestAssured.given;
 
 public class UserApi {
+
     private final ApiClient client;
 
     public UserApi(ApiClient client) {
@@ -13,13 +15,8 @@ public class UserApi {
     }
 
     public Response register(User user) {
-
-        String body = String.format(
-                "{\"email\":\"%s\",\"password\":\"%s\",\"submitPassword\":\"%s\"}",
-                user.getEmail(),
-                user.getPassword(),
-                user.getPassword()
-        );
+        RegisterRequest body =
+                new RegisterRequest(user.getEmail(), user.getPassword());
 
         return given()
                 .spec(client.baseSpec())
@@ -27,6 +24,4 @@ public class UserApi {
                 .when()
                 .post("/api/signup");
     }
-
 }
-

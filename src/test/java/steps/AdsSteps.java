@@ -1,68 +1,45 @@
 package steps;
 
-import di.TestContext;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import io.cucumber.java.ru.Когда;
+import io.cucumber.java.ru.Тогда;
 import models.Ad;
-import pages.AdEditPage;
+import models.User;
 import pages.AdsPage;
-import utils.TestData;
+import pages.CreateListingPage;
+import di.TestContext;
+import pages.LoginPage;
+import pages.MainPage;
+import utils.AdGenerator;
 
 import static com.codeborne.selenide.Condition.exist;
-import static com.codeborne.selenide.Condition.not;
 
 public class AdsSteps {
 
-    private final TestContext ctx;
-    private final AdsPage adsPage;
-    private final AdEditPage adEditPage;
+    private final AdsPage adsPage = new AdsPage();
+    private final CreateListingPage createListingPage = new CreateListingPage();
+    private final AdGenerator adGenerator = new AdGenerator();
+    private final MainPage mainPage = new MainPage();
 
-    public AdsSteps(TestContext ctx) {
-        this.ctx = ctx;
-        this.adsPage = new AdsPage();
-        this.adEditPage = new AdEditPage();
+    @Когда("пользователь создает объявление")
+    public void userCreatesAd() {
+        User user = TestContext.getUser();
+        LoginPage loginPage = new LoginPage();
+        Ad ad = adGenerator.createAd();
+        TestContext.setAd(ad);
+
+
+       mainPage.clickPlaceAd();
+
+        createListingPage.shouldBeOpened();
+        createListingPage.enterTitle(ad.getTitle());
+        createListingPage.clickPublish();
     }
 
-    @When("пользователь создает объявление")
-    public void createAd() {
-        Ad ad = TestData.newAdAnyCategory();
-        ctx.setAd(ad);
-
-        adsPage.openCreateForm();
-        adsPage.createAd(ad);
-    }
-
-    @Then("объявление отображается в списке")
-    public void adVisibleInList() {
-        adsPage.adCardByTitle(ctx.getAd().getTitle()).should(exist);
-    }
-
-    @When("пользователь редактирует свое объявление изменяя заголовок")
-    public void editAdTitle() {
-        adsPage.openAdByTitle(ctx.getAd().getTitle());
-
-        adEditPage.clickEdit();
-
-        String newTitle = ctx.getAd().getTitle() + "_edited";
-        ctx.setAd(new Ad(newTitle, ctx.getAd().getDescription(), ctx.getAd().getCategory()));
-
-        adEditPage.changeTitle(newTitle);
-    }
-
-    @Then("изменения объявления сохранены")
-    public void changesSaved() {
-        adsPage.adCardByTitle(ctx.getAd().getTitle()).should(exist);
-    }
-
-    @When("пользователь удаляет свое объявление")
-    public void deleteAd() {
-        adsPage.openAdByTitle(ctx.getAd().getTitle());
-        adEditPage.deleteAd();
-    }
-
-    @Then("объявление удалено и не отображается в списке")
-    public void adDeleted() {
-        adsPage.adCardByTitle(ctx.getAd().getTitle()).should(not(exist));
+    @Тогда("объявление отображается в списке")
+    public void adIsDisplayedInList() {
+        adsPage
+                .adCardByTitle(TestContext.getAd().getTitle())
+                .should(exist);
     }
 }
 
