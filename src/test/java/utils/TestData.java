@@ -6,8 +6,8 @@ import models.User;
 public class TestData {
 
     public static User validUser() {
-        String email = "test_" + System.currentTimeMillis() + "@mail.com";
-        String password = "Password123";
+        String email = "gens_" + System.currentTimeMillis() + "@gmail.com";
+        String password = "olga123@!";
         return new User(email, password);
     }
 

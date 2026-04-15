@@ -13,7 +13,7 @@ public class CreateListingPage extends BasePage {
     private final SelenideElement titleInput =
             $("[name='name']");
 
-    // финальная кнопка публикации на этой странице (вторая "Разместить объявление")
+
     private final SelenideElement publishButton =
             $$("button").findBy(text("Разместить объявление"));
 
