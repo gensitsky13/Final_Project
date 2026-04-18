@@ -1,6 +1,6 @@
 package di;
 
-import models.Ad;
+/*import models.Ad;
 import models.User;
 
 public class TestContext {
@@ -32,5 +32,32 @@ public class TestContext {
 
     public static void setAd(Ad ad) {
         getInstance().ad = ad;
+    }
+}
+
+ */
+
+import models.User;
+import models.Ad;
+
+public class TestContext {
+
+    private User currentUser;
+    private Ad currentAd;
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public Ad getCurrentAd() {
+        return currentAd;
+    }
+
+    public void setCurrentAd(Ad currentAd) {
+        this.currentAd = currentAd;
     }
 }

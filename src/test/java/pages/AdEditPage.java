@@ -2,44 +2,48 @@ package pages;
 
 import com.codeborne.selenide.SelenideElement;
 
+import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.WebDriverConditions.urlContaining;
 
 public class AdEditPage extends BasePage {
-    private final SelenideElement editBtn = $("#edit");
     private final SelenideElement deleteBtn = $("#delete");
     private final SelenideElement confirmDelete = $("#confirm");
 
     private final SelenideElement title = $("#title");
     private final SelenideElement saveBtn = $("#save");
 
-    public void clickEdit() { editBtn.click(); }
+
+    private final SelenideElement editBtn =
+            $x("//button[contains(., 'Редактировать объявление')]");
+
+    private final SelenideElement titleInput = $("input[name='name']");
+
+    private final SelenideElement saveButton =
+            $x("//button[contains(., 'Сохранить')]");
+
+    public void clickEdit() {
+        editBtn.shouldBe(visible, enabled).scrollIntoView(true);
+
+        try {
+            editBtn.click();
+        } catch (Exception e) {
+            executeJavaScript("arguments[0].click();", editBtn);
+        }
+
+        sleep(2000); // обязательно!
+    }
 
     public void changeTitle(String newTitle) {
-        title.clear();
-        title.setValue(newTitle);
-        saveBtn.click();
-    }
+        titleInput.shouldBe(visible, enabled);
+        titleInput.clear();
+        titleInput.setValue(newTitle);
 
-    public void deleteAd() {
-        deleteBtn.click();
-        confirmDelete.click();
-    }
-    private final SelenideElement titleInput = $("#title");
-    private final SelenideElement descriptionInput = $("#description");
-    private final SelenideElement saveButton = $x("//button[contains(.,'Сохранить')]");
-
-    public void fillTitle(String title) {
-        titleInput.shouldBe(visible).setValue(title);
-    }
-
-    public void fillDescription(String description) {
-        descriptionInput.shouldBe(visible).setValue(description);
-    }
-
-    public void save() {
-        saveButton.shouldBe(visible).click();
+        saveButton.shouldBe(visible, enabled).click();
     }
 }
+
+
+
 

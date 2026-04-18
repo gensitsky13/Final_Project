@@ -7,7 +7,7 @@ import java.util.UUID;
 public class AdGenerator {
 
     public Ad createAd() {
-        String title = "Test auto " + UUID.randomUUID();
+        String title = "olgatest " + System.currentTimeMillis();
         String category = "Авто";
         String condition = "Б/у";
         String city = "Москва";

@@ -1,5 +1,8 @@
 package steps;
+import api.ApiClient;
+import api.UserApi;
 import com.codeborne.selenide.Selenide;
+import di.TestContext;
 import io.cucumber.java.ru.Дано;
 import io.cucumber.java.ru.И;
 import io.cucumber.java.ru.Когда;
@@ -14,17 +17,23 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class RegistrationSteps {
 
-    private RegisterPage registerPage;
-    private User user = UserDataGenerator.generateUser();
+    private final RegisterPage registerPage = new RegisterPage();
+    private final TestContext testContext;
+
+    public RegistrationSteps(TestContext testContext) {
+        this.testContext = testContext;
+    }
 
     @Дано("открыт экран регистрации")
     public void openRegistrationScreen() {
-        registerPage = LoginPage.goToRegistration();
+        LoginPage.goToRegistration();
     }
+
 
     @Когда("пользователь регистрируется через UI с уникальными данными")
     public void registerUserViaUiWithUniqueData() {
-        registerPage.fillRegistrationForm(user.getEmail(), user.getPassword());
+        User user= testContext.getCurrentUser();
+        registerPage.fillRegistrationForm(user.getEmail(),user.getPassword());
         registerPage.submitRegistration();
     }
 
@@ -41,15 +50,29 @@ public class RegistrationSteps {
 open("https://qa-desk.stand.praktikum-services.ru/registration");
 
     }
+    @Дано("создан новый пользователь")
+    public void createNewUser() {
+        User user = UserDataGenerator.generateUser();
+        testContext.setCurrentUser(user);
+    }
+    @Дано("пользователь зарегистрирован через API")
+    public void userRegisteredViaApi() {
+        User user = UserDataGenerator.generateUser();
 
+        ApiClient client = new ApiClient();
+        UserApi userApi = new UserApi(client);
 
+        userApi.register(user);
 
+        testContext.setCurrentUser(user);
+    }
 
     @Когда("пользователь пытается зарегистрироваться повторно через UI тем же email")
     public void tryToRegisterAgainWithSameEmail() {
-        String email = "gens@gmail.com";
-        String password = "olga123@!";
-        registerPage.fillRegistrationForm(email,password);
+       // String email = "gens@gmail.com";
+       // String password = "olga123@!";
+        User user = testContext.getCurrentUser();
+        registerPage.fillRegistrationForm(user.getEmail(),user.getPassword());
         registerPage.submitRegistration();
     }
 

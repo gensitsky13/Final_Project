@@ -10,25 +10,38 @@ import static com.codeborne.selenide.WebDriverConditions.urlContaining;
 public class CreateListingPage extends BasePage {
 
 
+    private final SelenideElement createListingContainer =
+            $x("//*[contains(text(),'Новое объявление')]/ancestor::div[1]");
+
     private final SelenideElement titleInput =
-            $("[name='name']");
+            $x("//input[@placeholder='Название']");
 
-
+    //private final SelenideElement publishButton =
+           // $x("//button[contains(., 'Разместить объявление')]");
     private final SelenideElement publishButton =
-            $$("button").findBy(text("Разместить объявление"));
+            $x("//button[contains(., 'Опубликовать')]");
 
     public void shouldBeOpened() {
-        $(byText("Добавить фото")).shouldBe(visible);
         $x("//*[contains(text(),'Новое объявление')]").shouldBe(visible);
+        titleInput.shouldBe(visible);
     }
 
-
-
     public void enterTitle(String title) {
-        titleInput.shouldBe(editable).setValue(title);
+        titleInput.shouldBe(visible, enabled).clear();
+        titleInput.setValue(title);
+        titleInput.shouldHave(value(title));
+
     }
 
     public void clickPublish() {
-        publishButton.shouldBe(enabled).click();
+        publishButton.shouldBe(visible, enabled).scrollIntoView(true);
+
+        try {
+            publishButton.click();
+        } catch (Exception e) {
+            executeJavaScript("arguments[0].click();", publishButton);
+        }
+
+
     }
 }
