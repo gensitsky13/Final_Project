@@ -1,5 +1,7 @@
 package utils;
 
+import models.User;
+
 import java.util.UUID;
 
 public final class RandomData {
@@ -16,4 +18,6 @@ public final class RandomData {
     public static String shortText() {
         return "txt_" + UUID.randomUUID().toString().substring(0, 6);
     }
+
+
 }

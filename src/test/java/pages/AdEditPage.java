@@ -2,27 +2,53 @@ package pages;
 
 import com.codeborne.selenide.SelenideElement;
 
-import static com.codeborne.selenide.Selenide.$;
+import java.time.Duration;
+
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.WebDriverConditions.urlContaining;
 
 public class AdEditPage extends BasePage {
-    private final SelenideElement editBtn = $("#edit");          // TODO
-    private final SelenideElement deleteBtn = $("#delete");      // TODO
-    private final SelenideElement confirmDelete = $("#confirm"); // TODO
+    private final SelenideElement deleteBtn = $("#delete");
+    private final SelenideElement confirmDelete = $("#confirm");
 
-    private final SelenideElement title = $("#title");           // TODO
-    private final SelenideElement saveBtn = $("#save");          // TODO
+    private final SelenideElement title = $("#title");
+    private final SelenideElement saveBtn = $("#save");
 
-    public void clickEdit() { editBtn.click(); }
+
+    private final SelenideElement editBtn =
+            $x("//button[contains(., 'Редактировать объявление')]");
+
+    private final SelenideElement titleInput = $("input[name='name']");
+
+    private final SelenideElement saveButton =
+            $x("//button[contains(., 'Сохранить')]");
+
+    public void clickEdit() {
+        editBtn.shouldBe(visible, enabled).scrollIntoView(true);
+
+        try {
+            editBtn.click();
+        } catch (Exception e) {
+            executeJavaScript("arguments[0].click();", editBtn);
+        }
+
+
+titleInput.shouldBe(visible, Duration.ofSeconds(10));
+
+    }
 
     public void changeTitle(String newTitle) {
-        title.clear();
-        title.setValue(newTitle);
-        saveBtn.click();
-    }
+        titleInput.shouldBe(visible, enabled);
+        titleInput.clear();
+        titleInput.setValue(newTitle);
+        titleInput.shouldHave(value(newTitle));
 
-    public void deleteAd() {
-        deleteBtn.click();
-        confirmDelete.click();
+        saveButton.shouldBe(visible, enabled).click();
+        saveButton.should(disappear);
     }
 }
+
+
+
 

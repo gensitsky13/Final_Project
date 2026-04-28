@@ -1,34 +1,45 @@
 package pages;
 
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selenide.$;
 
 public class RegisterPage extends BasePage {
 
-    // кнопка сабмита в модалке
-    private final SelenideElement submitButton =
-            $(byText("Создать аккаунт"));
+    private final SelenideElement emailInput = $("input[placeholder='Введите Email']");
+    private final SelenideElement passwordInput = $("input[placeholder='Пароль']");
+    private final SelenideElement repeatPasswordInput = $("input[placeholder='Повторите пароль']");
+    private final SelenideElement submitButton = $(byText("Создать аккаунт"));
+    private final SelenideElement loginButtonInRegisterPopup = $(byText("Уже есть аккаунт"));
+    private final SelenideElement registerTitle = $(byText("Зарегистрироваться"));
+    private final SelenideElement validationError = $(byText("Ошибка"));
 
-    public void open() {
-        Selenide.open("/register");
 
+
+    public void shouldBeOpened() {
+        registerTitle.shouldBe(visible);
+        emailInput.shouldBe(visible);
     }
 
-    // ✅ Позитивный сценарий (используется ТОЛЬКО для успешной регистрации)
-    public void registerSuccessfully(String email, String password) {
-        $("input[placeholder='Введите Email']").setValue(email);
-        $("input[placeholder='Пароль']").setValue(password);
-        $("input[placeholder='Повторите пароль']").setValue(password);
-
-        submitButton.click();
+    public void fillRegistrationForm(String email, String password) {
+        emailInput.shouldBe(visible).setValue(email);
+        passwordInput.shouldBe(visible).setValue(password);
+        repeatPasswordInput.shouldBe(visible).setValue(password);
     }
 
-    //  Проверка ошибки
+    public void submitRegistration() {
+        submitButton.shouldBe(visible).shouldBe(enabled).click();
+    }
+
     public void shouldSeeDuplicateEmailError() {
-        $(byText("Ошибка")).shouldBe(visible);
+       registerTitle.shouldBe(visible);
+       validationError.shouldBe(visible).shouldHave(text("Ошибка"));
+    }
+
+
+    public void checkRegistrationSuccess() {
+        loginButtonInRegisterPopup.shouldBe(visible);
     }
 }

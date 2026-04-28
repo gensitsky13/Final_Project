@@ -1,68 +1,56 @@
 package steps;
 
-import di.TestContext;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import models.Ad;
-import pages.AdEditPage;
-import pages.AdsPage;
-import utils.TestData;
 
-import static com.codeborne.selenide.Condition.exist;
-import static com.codeborne.selenide.Condition.not;
+import io.cucumber.java.ru.Когда;
+import io.cucumber.java.ru.Тогда;
+import models.Ad;
+
+import pages.AdsPage;
+import pages.CreateListingPage;
+import di.TestContext;
+import pages.MainPage;
+import utils.AdGenerator;
+import static com.codeborne.selenide.Condition.visible;
+
+
 
 public class AdsSteps {
 
-    private final TestContext ctx;
-    private final AdsPage adsPage;
-    private final AdEditPage adEditPage;
+    private final AdsPage adsPage = new AdsPage();
+    private final CreateListingPage createListingPage = new CreateListingPage();
+    private final AdGenerator adGenerator = new AdGenerator();
+    private final MainPage mainPage = new MainPage();
+    private final TestContext testContext;
 
-    public AdsSteps(TestContext ctx) {
-        this.ctx = ctx;
-        this.adsPage = new AdsPage();
-        this.adEditPage = new AdEditPage();
+    public AdsSteps(TestContext testContext) {
+        this.testContext = testContext;
     }
 
-    @When("пользователь создает объявление")
-    public void createAd() {
-        Ad ad = TestData.newAdAnyCategory();
-        ctx.setAd(ad);
+    @Когда("пользователь создает объявление")
+    public void userCreatesAd() {
+        Ad ad = adGenerator.createAd();
+        testContext.setCurrentAd(ad);
 
-        adsPage.openCreateForm();
-        adsPage.createAd(ad);
+
+       mainPage.clickPlaceAd();
+        createListingPage.shouldBeOpened();
+        createListingPage.enterTitle(ad.getTitle());
+        createListingPage.clickPublish();
+
+    }
+    @Когда("пользователь ищет объявление по title")
+    public void userSearchesAdByTitle() {
+        String title = testContext.getCurrentAd().getTitle();
+        adsPage.searchByTitle(title);
+    }
+    @Тогда("объявление отображается в списке")
+    public void adIsDisplayedInList() {
+        adsPage.shouldBeOpened();
+
+        adsPage
+                .adCardByTitle(testContext.getCurrentAd().getTitle())
+                .shouldBe(visible);
     }
 
-    @Then("объявление отображается в списке")
-    public void adVisibleInList() {
-        adsPage.adCardByTitle(ctx.getAd().getTitle()).should(exist);
-    }
-
-    @When("пользователь редактирует свое объявление изменяя заголовок")
-    public void editAdTitle() {
-        adsPage.openAdByTitle(ctx.getAd().getTitle());
-
-        adEditPage.clickEdit();
-
-        String newTitle = ctx.getAd().getTitle() + "_edited";
-        ctx.setAd(new Ad(newTitle, ctx.getAd().getDescription(), ctx.getAd().getCategory()));
-
-        adEditPage.changeTitle(newTitle);
-    }
-
-    @Then("изменения объявления сохранены")
-    public void changesSaved() {
-        adsPage.adCardByTitle(ctx.getAd().getTitle()).should(exist);
-    }
-
-    @When("пользователь удаляет свое объявление")
-    public void deleteAd() {
-        adsPage.openAdByTitle(ctx.getAd().getTitle());
-        adEditPage.deleteAd();
-    }
-
-    @Then("объявление удалено и не отображается в списке")
-    public void adDeleted() {
-        adsPage.adCardByTitle(ctx.getAd().getTitle()).should(not(exist));
-    }
 }
 

@@ -1,46 +1,81 @@
 package steps;
-
+import api.ApiClient;
+import api.UserApi;
+import com.codeborne.selenide.Selenide;
 import di.TestContext;
+import io.cucumber.java.ru.Дано;
+import io.cucumber.java.ru.И;
 import io.cucumber.java.ru.Когда;
 import io.cucumber.java.ru.Тогда;
+import helpers.UserDataGenerator;
 import models.User;
-import org.example.Main;
-import pages.MainPage;
+import pages.LoginPage;
 import pages.RegisterPage;
-import utils.TestData;
+import static com.codeborne.selenide.Selenide.open;
+
+
 
 public class RegistrationSteps {
 
     private final RegisterPage registerPage = new RegisterPage();
-    private static final TestContext context = new TestContext();
+    private final TestContext testContext;
+
+    public RegistrationSteps(TestContext testContext) {
+        this.testContext = testContext;
+    }
+
+    @Дано("открыт экран регистрации")
+    public void openRegistrationScreen() {
+        LoginPage.goToRegistration();
+    }
+
 
     @Когда("пользователь регистрируется через UI с уникальными данными")
-    public void registerUniqueUserViaUi() {
-        User user = TestData.validUser();
-        context.setUser(user);
+    public void registerUserViaUiWithUniqueData() {
+        User user= testContext.getCurrentUser();
+        registerPage.fillRegistrationForm(user.getEmail(),user.getPassword());
+        registerPage.submitRegistration();
+    }
 
-        registerPage.registerSuccessfully(user.getEmail(), user.getPassword());
+    @Тогда("регистрация успешна")
+    public void verifyRegistrationSuccess() {
+        registerPage.checkRegistrationSuccess();
+    }
+    @И("пользователь закрывает браузер")
+    public void closeBrowser() {
+        Selenide.closeWebDriver();
+    }
+    @Дано("пользователь открывает экран регистрации")
+    public void openRegistrationPage() {
+open("https://qa-desk.education-services.ru/regiatration");
+
+    }
+    @Дано("создан новый пользователь")
+    public void createNewUser() {
+        User user = UserDataGenerator.generateUser();
+        testContext.setCurrentUser(user);
+    }
+    @Дано("пользователь зарегистрирован через API")
+    public void userRegisteredViaApi() {
+        User user = UserDataGenerator.generateUser();
+
+        ApiClient client = new ApiClient();
+        UserApi userApi = new UserApi(client);
+
+        userApi.register(user);
+
+        testContext.setCurrentUser(user);
     }
 
     @Когда("пользователь пытается зарегистрироваться повторно через UI тем же email")
-    public void registerSameEmailAgainViaUi() {
-        // ❗ НИЧЕГО не заполняем
-//        registerPage.submitDuplicateRegistration();
-        User user = context.getUser();
-        registerPage.registerSuccessfully(user.getEmail(), user.getPassword());
+    public void tryToRegisterAgainWithSameEmail() {
+        User user = testContext.getCurrentUser();
+        registerPage.fillRegistrationForm(user.getEmail(),user.getPassword());
+        registerPage.submitRegistration();
     }
-
 
     @Тогда("пользователь видит ошибку что email уже существует")
-    public void userSeesDuplicateEmailError() {
-        User user = context.getUser();
-        //registerPage.registerSuccessfully(user.getEmail(), user.getPassword());
+    public void verifyDuplicateEmailError() {
         registerPage.shouldSeeDuplicateEmailError();
     }
-
-    @Когда("открыт экран registracii")
-    public void showRegistrationPage() {
-        new MainPage().showRegistration();
-    }
 }
-

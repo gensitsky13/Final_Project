@@ -1,32 +1,74 @@
+
 package pages;
 
+
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import models.Ad;
+
+import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.WebDriverConditions.urlContaining;
 
-public class AdsPage extends BasePage {
-    private final SelenideElement createBtn = $("#createAd");  // TODO
-    private final SelenideElement title = $("#title");         // TODO
-    private final SelenideElement description = $("#desc");    // TODO
-    private final SelenideElement category = $("#category");   // TODO (select)
-    private final SelenideElement saveBtn = $("#save");        // TODO
+public class AdsPage {
 
-    public void openCreateForm() { createBtn.click(); }
+    private final SelenideElement adsPageContainer = $("body");
+    private final SelenideElement searchInput = $("input[name='name']");
+    private final SelenideElement searchArrowButton =
+            $x("//input[@name='name']/ancestor::div[1]/following-sibling::button");
 
-    public void createAd(Ad ad) {
-        title.setValue(ad.getTitle());
-        description.setValue(ad.getDescription());
-        // category.selectOption(ad.getCategory()); // если select
-        saveBtn.click();
+
+
+    private final SelenideElement placeAdButton =
+            $x("//button[contains(.,'Разместить объявление')]");
+    private final SelenideElement applyButton =
+            $x("//button[contains(., 'Применить')]");
+
+
+    public AdsPage shouldBeOpened() {
+        webdriver().shouldHave(urlContaining("/"));
+        placeAdButton.shouldBe(visible);
+        return this;
     }
 
-    public SelenideElement adCardByTitle(String titleText) {
-        // TODO: под твой UI
-        return $$("[data-test='ad-card']").findBy(com.codeborne.selenide.Condition.text(titleText));
+    public AdsPage clickPlaceAd() {
+        placeAdButton.shouldBe(visible, enabled).scrollIntoView(true);
+
+        try {
+            placeAdButton.click();
+        } catch (Exception e) {
+            executeJavaScript("arguments[0].click();", placeAdButton);
+        }
+
+        return this;
     }
 
-    public void openAdByTitle(String titleText) {
-        adCardByTitle(titleText).click();
+
+
+    public AdsPage searchByTitle(String title) {
+        searchInput.shouldBe(visible, enabled).scrollIntoView(true).click();
+
+        searchInput.clear();
+        searchInput.setValue(title);
+
+        searchInput.shouldHave(value(title));
+
+        applyButton.shouldBe(visible, enabled).scrollIntoView(true);
+
+        try {
+            applyButton.click();
+        } catch (Exception e) {
+            executeJavaScript("arguments[0].click();", applyButton);
+        }
+
+
+        return this;
+    }
+
+
+    public SelenideElement adCardByTitle(String title) {
+        return $x("//*[contains(., '" + title + "')]");
     }
 }
