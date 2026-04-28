@@ -10,7 +10,7 @@ import static com.codeborne.selenide.Selenide.open;
 public class BasePage {
 
 
-    protected static final String BASE_URL = "https://qa-desk.stand.praktikum-services.ru/";
+    protected static final String BASE_URL = "https://qa-desk.education-services.ru/";
 
     protected final SelenideElement body = $("body");
 

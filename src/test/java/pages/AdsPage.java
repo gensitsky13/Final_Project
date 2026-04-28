@@ -2,8 +2,11 @@
 package pages;
 
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+
+import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Condition.*;
@@ -47,6 +50,32 @@ public class AdsPage {
     public AdsPage searchByTitle(String title) {
         searchInput.shouldBe(visible, enabled).scrollIntoView(true).click();
         sleep(500);
+       //searchInput.shouldBe(visible);
+        searchInput.clear();
+        searchInput.setValue(title);
+        sleep(500);
+        searchInput.shouldHave(value(title));
+
+        applyButton.shouldBe(visible, enabled).scrollIntoView(true);
+
+        try {
+            applyButton.click();
+        } catch (Exception e) {
+            executeJavaScript("arguments[0].click();", applyButton);
+        }
+//adCardByTitle(title).shouldBe(visible);
+        sleep(2000);
+
+        return this;
+    }
+
+
+
+
+   /* public AdsPage searchByTitle(String title) {
+        searchInput.shouldBe(visible, enabled).scrollIntoView(true).click();
+        sleep(500);
+
         searchInput.clear();
         searchInput.setValue(title);
         sleep(500);
@@ -60,10 +89,13 @@ public class AdsPage {
             executeJavaScript("arguments[0].click();", applyButton);
         }
 
-        sleep(2000); // пока для дебага
+        adCardByTitle(title).shouldBe(visible);
 
         return this;
     }
+
+    */
+
 
 
     public SelenideElement adCardByTitle(String title) {

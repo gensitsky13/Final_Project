@@ -14,7 +14,6 @@ public class RegisterPage extends BasePage {
     private final SelenideElement submitButton = $(byText("Создать аккаунт"));
     private final SelenideElement loginButtonInRegisterPopup = $(byText("Уже есть аккаунт"));
     private final SelenideElement registerTitle = $(byText("Зарегистрироваться"));
-    //private final SelenideElement validationError = $(".input_span__yWPqB");
     private final SelenideElement validationError = $(byText("Ошибка"));
 
 

@@ -2,8 +2,9 @@ package pages;
 
 import com.codeborne.selenide.SelenideElement;
 
-import static com.codeborne.selenide.Condition.enabled;
-import static com.codeborne.selenide.Condition.visible;
+import java.time.Duration;
+
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.urlContaining;
 
@@ -31,16 +32,20 @@ public class AdEditPage extends BasePage {
         } catch (Exception e) {
             executeJavaScript("arguments[0].click();", editBtn);
         }
+       // sleep(2000);
 
-        sleep(2000); // обязательно!
+titleInput.shouldBe(visible, Duration.ofSeconds(10));
+
     }
 
     public void changeTitle(String newTitle) {
         titleInput.shouldBe(visible, enabled);
         titleInput.clear();
         titleInput.setValue(newTitle);
+        titleInput.shouldHave(value(newTitle));
 
         saveButton.shouldBe(visible, enabled).click();
+        saveButton.should(disappear);
     }
 }
 

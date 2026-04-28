@@ -47,7 +47,7 @@ public class RegistrationSteps {
     }
     @Дано("пользователь открывает экран регистрации")
     public void openRegistrationPage() {
-open("https://qa-desk.stand.praktikum-services.ru/registration");
+open("https://qa-desk.education-services.ru/regiatration");
 
     }
     @Дано("создан новый пользователь")
@@ -69,8 +69,6 @@ open("https://qa-desk.stand.praktikum-services.ru/registration");
 
     @Когда("пользователь пытается зарегистрироваться повторно через UI тем же email")
     public void tryToRegisterAgainWithSameEmail() {
-       // String email = "gens@gmail.com";
-       // String password = "olga123@!";
         User user = testContext.getCurrentUser();
         registerPage.fillRegistrationForm(user.getEmail(),user.getPassword());
         registerPage.submitRegistration();

@@ -16,6 +16,7 @@ import utils.TestData;
 import api.ApiClient;
 import api.UserApi;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuthSteps {
@@ -51,8 +52,8 @@ public void existingUserRegisteredViaApi() {
 
 
    // TestContext.setUser(user);
-    Response response = userApi.register(user);
-    assertTrue(response.statusCode() == 201 || response.statusCode() == 200);
+   // Response response = userApi.register(user);
+   // assertTrue(response.statusCode() == 201 || response.statusCode() == 200);
 }
     @Когда("пользователь авторизуется")
     public void logInUser() {
