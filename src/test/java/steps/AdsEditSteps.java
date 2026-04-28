@@ -38,12 +38,12 @@ public class AdsEditSteps {
         }
 
 
-        sleep(2000);
+
 
         adEditPage.clickEdit();
-        sleep(1000);
+
         adEditPage.changeTitle(newTitle);
-        sleep(2000);
+
 
         Ad oldAd = testContext.getCurrentAd();
         Ad updatedAd = new Ad(

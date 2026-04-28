@@ -32,7 +32,7 @@ public class AdEditPage extends BasePage {
         } catch (Exception e) {
             executeJavaScript("arguments[0].click();", editBtn);
         }
-       // sleep(2000);
+
 
 titleInput.shouldBe(visible, Duration.ofSeconds(10));
 
